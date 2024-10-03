@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap"
+  rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/tw-elements/css/tw-elements.min.css" />
+<script src="https://cdn.tailwindcss.com/3.3.0"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      fontFamily: {
+        sans: ["Roboto", "sans-serif"],
+        body: ["Roboto", "sans-serif"],
+        mono: ["ui-monospace", "monospace"],
+      },
+    },
+    corePlugins: {
+      preflight: false,
+    },
+  };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<title>{% block title %} {% endblock title  %}</title>
+</head>
+
+<body>
+
+
+<nav
+  class="relative flex w-full flex-wrap items-center justify-between bg-zinc-50 py-2 shadow-dark-mild dark:bg-neutral-700 lg:py-4"
+  data-twe-navbar-ref>
+  <div class="flex w-full flex-wrap items-center justify-between px-3">
+
+    
+    <button
+      class="block border-0 bg-transparent px-2 text-black/50 hover:no-underline hover:shadow-none focus:no-underline focus:shadow-none focus:outline-none focus:ring-0 dark:text-neutral-200 lg:hidden"
+      type="button"
+      data-twe-collapse-init
+      data-twe-target="#navbarSupportedContent4"
+      aria-controls="navbarSupportedContent4"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      
+      <span
+        class="[&>svg]:w-7 [&>svg]:stroke-black/50 dark:[&>svg]:stroke-neutral-200">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+            clip-rule="evenodd" />
+        </svg>
+      </span>
+    </button>
+
+   
+    <div
+      class="!visible mt-2 hidden flex-grow basis-[100%] items-center lg:mt-0 lg:!flex lg:basis-auto"
+      id="navbarSupportedContent4"
+      data-twe-collapse-item>
+     
+      <ul
+        class="list-style-none me-auto flex flex-col ps-0 lg:mt-1 lg:flex-row"
+        data-twe-navbar-nav-ref>
+
+  
+
+      <ul
+  class="mb-5 flex list-none flex-row flex-wrap border-b-0 ps-0"
+  data-twe-nav-ref>
+{% if request.user.is_authenticated %}
+  <li  class="z-20 ml-4">
+    <a
+      href="{% url 'list_requests' %}"
+      class="relative my-2 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-xs font-medium uppercase leading-tight text-neutral-500 hover:isolate hover:border-transparent hover:bg-zinc-100 focus:isolate focus:border-transparent dark:text-white/50 dark:hover:bg-neutral-700/60"
+      >
+      <i class="fa-solid fa-file-arrow-up fa-xl text-sky-700"></i>
+      Sent invitations
+      {% if  pending_request %}
+      <div
+        class="absolute bottom-auto left-auto right-0 top-0 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 whitespace-nowrap rounded-full bg-sky-600 px-2.5 py-1 text-center align-baseline text-xs font-bold leading-none text-white">
+       <small class="lowercase italic"  data-twe-toggle="tooltip" title="Pending">{{pending_request.count}}</small>
+      </div>
+      {% endif %}
+      </a>
+      
+  </li>
+
+  <li  class="z-20 ml-12">
+
+    <a
+      href="{% url 'list_invitations' %}"
+      class="relative my-2 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-xs font-medium uppercase leading-tight text-neutral-500 hover:isolate hover:border-transparent hover:bg-zinc-100 focus:isolate focus:border-transparent dark:text-white/50 dark:hover:bg-neutral-700/60"
+      >
+      <i class="fa-solid fa-file-arrow-down fa-xl text-teal-700 "></i>
+      Received Invitations
+      {% if pending_inivitation %}
+      <div
+        class="absolute bottom-auto left-auto right-0 top-0 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 whitespace-nowrap rounded-full bg-teal-700 px-2.5 py-1 text-center align-baseline text-xs font-bold leading-none text-white">
+        <small class="lowercase italic" data-twe-toggle="tooltip" title="Pending" >{{pending_inivitation.count}}</small>
+      </div>
+      {% endif %}
+
+      </a>
+  </li>
+
+  <li  class="z-20 ml-4">
+    <a
+      href="{% url 'list_contacts' %}"
+      class="relative my-2 ml-6 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-xs font-medium uppercase leading-tight text-neutral-500 hover:isolate hover:border-transparent hover:bg-zinc-100 focus:isolate focus:border-transparent"
+      >
+      <i class="fa-solid fa-user-circle fa-xl text-violet-700"></i>      
+      My Contacts
+      <div
+        class="absolute bottom-auto left-auto right-0 top-0 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 whitespace-nowrap rounded-full bg-violet-700 px-2.5 py-1 text-center align-baseline text-xs font-bold leading-none text-white">
+        {{request.user.profile.contacts.count}}
+      </div>
+      </a>
+  </li>
+
+  </li>
+ 
+
+
+  {% endif %}
+  <li  class="z-10">
+    <a
+      href="{% url 'home' %}"
+      class="my-2 ml-6 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-xs font-medium uppercase leading-tight text-neutral-500 hover:isolate hover:border-transparent hover:bg-zinc-100 focus:isolate focus:border-transparent  dark:text-white/50 dark:hover:bg-neutral-700/60 "
+      >Home
+    </a>
+  </li>
+  {% if request.user.is_superuser %}
+   <li  class="z-10">
+    <a
+      href="{% url 'show_reports' %}"
+      class="my-2 ml-6 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-xs font-medium uppercase leading-tight text-neutral-500 hover:isolate hover:border-transparent hover:bg-zinc-100 focus:isolate focus:border-transparent  dark:text-white/50 dark:hover:bg-neutral-700/60 "
+      >View Reports
+    </a>
+  </li>
+  {% endif %}
+
+
+</ul>
+     <!--test-->
+      </ul>
+
+      {% if request.user.is_authenticated %}
+      <div class="relative m-6 inline-flex w-fit">
+        <div
+          class="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full {% if last_message > 0 %} bg-red-600 {% else %} bg-gray-600  {% endif %} p-2.5 text-xs"></div>
+        <div
+          class="flex items-center justify-center rounded-lg bg-primary-500 px-4 py-3 text-center text-white shadow-lg dark:text-gray-200" >
+          <span class="[&>svg]:h-10 [&>svg]:w-10">
+          <a href="{% url 'mymessages' %}"><i class="fa-solid fa-envelope"></i></a>
+          </span>
+        </div>
+      </div>
+      {% endif %}
+
+
+
+
+
+      <div class="flex items-center">
+      {% if not request.user.is_authenticated %}
+        <a
+          href='{% url 'login' %}'
+          data-twe-ripple-init
+          data-twe-ripple-color="light"
+          class="me-3 inline-block rounded px-2 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary hover:text-primary-600 focus:text-primary-600 focus:outline-none focus:ring-0 active:text-primary-700 dark:text-secondary-600 dark:hover:text-secondary-500 dark:focus:text-secondary-500 dark:active:text-secondary-500">
+          Login
+        </a>
+        <a
+          href={% url 'signup' %}
+          data-twe-ripple-init
+          data-twe-ripple-color="light"
+          class="me-3 inline-block rounded bg-gray-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-gray-3 transition duration-150 ease-in-out hover:bg-gray-accent-300 hover:shadow-gray-2 focus:bg-gray-accent-300 focus:shadow-gray-2 focus:outline-none focus:ring-0 active:bg-gray-600 active:shadow-gray-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
+          Sign up
+        </a>
+      {% else %}
+
+        <!--profile dropdown-->
+        
+        <div class="relative mr-20" data-twe-dropdown-position="dropstart">
+              <button
+                type="button"
+                id="dropdownMenuButton1"
+                data-twe-dropdown-toggle-ref
+                aria-expanded="false"
+                data-twe-ripple-init
+                data-twe-ripple-color="light">
+
+                <img src="{{request.user.profile.image.url}}"
+                  class="mx-auto w-14 h-14 rounded-full"
+                  alt="Avatar" />
+                <h5 class="mb-2 text-sm font-medium leading-tight">{{request.user.username}}</h5></button>
+              </button>
+              <ul
+                class="absolute z-[1000] float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-base shadow-lg data-[twe-dropdown-show]:block dark:bg-surface-dark"
+                aria-labelledby="dropdownMenuButton1"
+                data-twe-dropdown-menu-ref>
+                <li>
+                  <a
+                    class="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                    href="{% url 'update_profile' %}"
+                    data-twe-dropdown-item-ref
+                    >edit</a>
+                </li>
+
+                <li>
+                  <a
+                    class="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                    href="{% url 'change_password' %}"
+                    data-twe-dropdown-item-ref
+                    >change password</a>
+                </li>
+
+                <li class="mr-20">
+                  <form method="POST" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button
+                    class="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                    type="submit"
+                    data-twe-dropdown-item-ref>Logout
+                    </button>
+                    </form>
+                </li>
+                <li>
+                </li>
+              </ul>
+        </div>
+
+      
+
+        <!--profile dropdown-->  
+
+      {% endif %}
+
+      </div>
+      
+    </div>
+    
+  </div>
+</nav>
+
+{% include "main/messages.html" %}
+
+{% block content %}
+
+{% endblock content %}
+
+
+{% block scripts %}
+
+
+{% endblock scripts %}
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/tw-elements/js/tw-elements.umd.min.js"></script>
+
+
+</body>
+</html>

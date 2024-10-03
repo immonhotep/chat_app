@@ -1,0 +1,83 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<!-- component -->
+<div class="max-w-[720px] mx-auto">
+    
+     <div class="block mb-4 mx-auto border-b border-slate-300 pb-2 max-w-[360px]">
+        <a target='_blank' href='https://www.material-tailwind.com/docs/html/table' class='block w-full px-4 py-2 text-center text-slate-700 transition-all '>
+                Invitation sent by <b>{{request.user.username}}</b>.
+            </a>
+    </div>
+
+    <div class="w-full flex justify-between items-center mb-3 mt-12 pl-3">
+        <div>
+            <h3 class="text-lg font-semibold text-slate-800">Sent invitations({{request.user.requests_sent.count}})</h3>
+            <p class="text-slate-500">Review invitations</p>
+        </div>
+        
+    </div>
+    
+    <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+    <table class="w-full text-left table-auto min-w-max">
+        <thead>
+        <tr class="border-b border-slate-300 bg-slate-50">
+            <th class="p-4 text-sm font-normal leading-none text-slate-500">Avatar</th>
+            <th class="p-4 text-sm font-normal leading-none text-slate-500">Username</th>
+            <th class="p-4 text-sm font-normal leading-none text-slate-500">Date</th>
+            <th class="p-4 text-sm font-normal leading-none text-slate-500">Status</th>
+            <th class="p-4 text-sm font-normal leading-none text-slate-500"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for request in requests %}
+        <tr class="hover:bg-slate-50 {% if request.status == 1 %} bg-yellow-50 animate-pulse  {% elif  request.status == 2 %} bg-emerald-50 {% elif  request.status == 3 %} bg-red-50 {% endif%}">
+            
+            <td class="p-4 border-b border-slate-200 py-5">
+            <a href="{% url 'show_profile' request.sent_to.profile.pk %}"><img src="{{request.sent_to.profile.image.url}}" alt="Product 1" class="w-16 h-16 object-cover rounded" /></a>
+            </td>
+            <td class="p-4 border-b border-slate-200 py-5">
+            <p class="block font-semibold text-sm text-slate-800">{{request.sent_to.username}}</p>
+            </td>
+            <td class="p-4 border-b border-slate-200 py-5">
+            <p class="text-sm text-slate-500">{{request.sent_date}}</p>
+            </td>
+            <td class="p-4 border-b border-slate-200 py-5">
+            <p class="text-sm text-slate-500">{% if request.status == 1 %} Pending {% elif  request.status == 2 %} Accepted   {% else%} Rejected {% endif %}</p>
+            </td>
+            <td class="p-4 border-b border-slate-200 py-5">
+            {% if request.status == 1 or request.status == 3%}
+            <a href="{% url 'cancel_request' request.pk %}" class="text-slate-500 hover:text-slate-700" data-twe-toggle="tooltip" title="Cancel request">
+                <i class="fa-solid fa-trash-can text-red-700"></i>
+            </a>
+            {% endif %}
+            </td>
+            
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+                {% if requests.has_other_pages %}
+                    <div class="flex items-center py-8">
+                    {% for page  in requests.paginator.page_range %}
+                        <a href="?page={{page}}" class="h-8 w-8 bg-stone-500  hover:bg-stone-300 font-semibold text-white text-sm flex items-center justify-center">{{page}}</a>
+                    {% endfor %}
+
+                    {% if requests.has_next %}
+                        <a href="?page={{requests.next_page_number}}" class="h-10 w-10 font-semibold text-gray-800 hover:text-gray-900 text-sm flex items-center justify-center ml-3">Next <i class="fas fa-arrow-right ml-2"></i></a>
+                    
+                    {% endif %}
+                    </div>
+                {% endif %}
+
+
+
+
+</div>
+
+               
+
+{% endblock content %}

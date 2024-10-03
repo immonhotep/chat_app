@@ -1,0 +1,82 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+
+<div class="max-w-sm mx-auto mt-40">
+
+
+<div class="max-w-2xl mx-auto">
+
+	<div class="p-4 max-w-md bg-white rounded-lg border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold leading-none text-gray-900 dark:text-white">{{request.user.username}} contacts({{request.user.profile.contacts.count}}):</h3>
+   </div>
+        {% if  request.user.profile.contacts.count == 0 %}
+            <div class="text-center italic"><span><i class="fa-regular fa-face-sad-tear fa-xl"></i></span><span>You have no contacts</span></div>
+        {% endif %}
+   <div class="flow-root">
+        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+        {% for profile in  contacts %}
+         <!--profile-->
+            <li class="py-3 sm:py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                       <a href="{% url 'show_profile' profile.pk %}"> <img class="w-8 h-8 rounded-full" src="{{profile.image.url}}"></a>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                           {{profile.user.first_name }} {{profile.user.last_name}}
+                        </p>
+                        <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                           {{profile.user.email}}
+                        </p>
+                    </div>
+
+                    <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                        <a href="{% url 'private_chat' profile.user.pk %}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-twe-toggle="tooltip" title="Chat">
+                        <i class="fa-solid fa-comments fa-xl"></i>                     
+                        </a>
+                    </div>
+                    
+                       <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                        
+                       
+                        <a href="{% url 'remove_contact' profile.pk%}" class="font-medium text-red-600 dark:text-blue-500 hover:underline" data-twe-toggle="tooltip" title="Delete contact">
+                        <i class="fa-solid fa-user-large-slash fa-xl"></i>                     
+                        </a>
+                        </form>
+                        </div>
+                </div>
+            </li>
+            {% endfor %}
+            <!--profile-->
+        </ul>
+   </div>
+</div>
+
+                {% if contacts.has_other_pages %}
+                    <div class="flex items-center py-8">
+                    {% for page  in contacts.paginator.page_range %}
+                        <a href="?page={{page}}" class="h-8 w-8 bg-stone-500  hover:bg-stone-300 font-semibold text-white text-sm flex items-center justify-center">{{page}}</a>
+                    {% endfor %}
+
+                    {% if contacts.has_next %}
+                        <a href="?page={{contacts.next_page_number}}" class="h-10 w-10 font-semibold text-gray-800 hover:text-gray-900 text-sm flex items-center justify-center ml-3">Next <i class="fas fa-arrow-right ml-2"></i></a>
+                    
+                    {% endif %}
+                    </div>
+                {% endif %}
+
+
+
+</div>
+
+</div>
+
+
+        
+
+
+
+{% endblock content %}

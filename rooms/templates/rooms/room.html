@@ -1,0 +1,171 @@
+ {% extends "main/base.html" %}
+
+ {% block title %} Welcome {% endblock title %}
+
+ {% block content %}
+
+
+
+<div
+  class="block rounded-lg bg-white text-surface text-center shadow-secondary-1 dark:bg-surface-dark dark:text-white mb-6">
+  <div
+    class="border-b-2 border-neutral-100 px-6 py-3 dark:border-white/10">
+    <span class="text-stone-800 text-2xl font-semibold me-2 px-2.5 py-0.5 rounded ms-2">{% if room.private%} Private room{% else %}{{room.name}} {% endif %}</span></h6>
+  </div>
+  <div class="p-6">
+    <figcaption class="text-md text-neutral-500 py-4">
+      - Chat <cite title="Source Title">Members:</cite>
+    </figcaption>
+    
+        
+        <div class="-space-x-1 overflow-hidden" id="reloadContent">   
+            {% for connected in  room.connection.all %}
+
+                <a href="{% url 'show_profile' connected.user.profile.pk %}"><img class="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="{{connected.user.profile.image.url}}" alt=""></a>
+            {% endfor %}
+        </div>
+ </div>
+</div>
+
+
+<!-- component -->
+<div class="bg-gray-100 h-96 flex flex-col max-w-lg mx-auto" >
+    <div class="bg-blue-500 p-4 text-white flex justify-between items-center">
+      <button id="login" class="hover:bg-blue-400 rounded-md p-1">
+        <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="6" r="4" stroke="#ffffff" stroke-width="1.5"></circle> <path d="M15 20.6151C14.0907 20.8619 13.0736 21 12 21C8.13401 21 5 19.2091 5 17C5 14.7909 8.13401 13 12 13C15.866 13 19 14.7909 19 17C19 17.3453 18.9234 17.6804 18.7795 18" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+      </button>
+      <span>Chat messages</span>
+      <div class="relative inline-block text-left">
+      </div>
+    </div>
+
+
+
+
+    <div class="p-4 overflow-auto " id="chat-window">
+        <div class="space-y-2 ">
+        
+            <div class="text-start">
+                <div class="text-black p-2 rounded-lg w-100 chat-messages " id="chat-messages">
+                    {% for message in messages %}
+                    <p class="flex items-center gap-4 py-3 break-after-auto">
+                    <img
+                    src="{{message.user.profile.image.url}}"
+                    class="w-9 h-9 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 text-left"
+                    alt="Avatar" />
+                    <b>{{message.user.username}}</b>:
+                    </p>
+                    
+                    <p class="ml-2 mt-4 italic text-sm"> {{message.content}}</p>                 
+                    {% endfor%}
+
+                </div>
+            </div>
+    
+         
+        </div>
+    </div>
+
+
+
+    
+    <div class="bg-white p-4 flex items-center">
+        <input type="text" id="chat-message-input" placeholder="Type your message..." class="flex-1 border rounded-full px-4 py-2 focus:outline-none">
+        <button id="chat-message-submit" class="bg-blue-500 text-white rounded-full p-2 ml-2 hover:bg-blue-600 focus:outline-none">
+          <i class="fa-regular fa-share-from-square fa-xl"></i>
+        </button>
+    </div>
+    
+  </div>
+
+
+
+ {% endblock content %}
+
+
+{% block scripts %}
+
+
+{{ room.slug|json_script:"json-roomname" }}
+{{ request.user.username|json_script:"json-username" }}
+
+<script>
+    const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+    const userName = JSON.parse(document.getElementById('json-username').textContent);
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        + roomName
+        + '/'
+    );
+
+    chatSocket.onclose = function(e) {
+        console.log('onclose')
+    }
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        if (data.message) {
+            
+            document.querySelector('#chat-messages').innerHTML += ('<p class="flex items-center gap-4 py-3 break-after-auto">' +`<img  class="w-9 h-9 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 text-left"  id="imageid" src="${data.profile_pic}">` + '<b>' + data.username + '</b>' + '</p>' + '<p class="ml-2 mt-4 italic text-sm">' +  data.message + '</p>' ); 
+            
+
+
+        } else {
+            alert('The message was empty!')
+        }
+
+        scrollToBottom();
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        e.preventDefault()
+
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+
+        console.log({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        })
+
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        }));
+
+        messageInputDom.value = '';
+
+        return false
+    };
+
+ 
+    function scrollToBottom() {
+        let objDiv = document.getElementById("chat-window");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    
+    scrollToBottom(); 
+</script>
+
+
+<script> 
+
+setInterval(function() {
+$("#reloadContent").load(location.href+" #reloadContent>*","");
+}, 1000 );
+</script>
+
+{% endblock scripts %}
